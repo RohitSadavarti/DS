@@ -1,796 +1,1061 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Algorithm Learning Visualizer</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Algorithm Learning Visualizer</title>
+	<style>
+		* {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            color: white;
-            padding: 20px;
-        }
+		body {
+			font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+			background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+			min-height: 100vh;
+			color: white;
+			padding: 20px;
+		}
 
-        .container {
-            max-width: 400px;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            padding: 20px;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-        }
+		.container {
+			max-width: 500px;
+			margin: 0 auto;
+			background: rgba(255, 255, 255, 0.1);
+			border-radius: 20px;
+			padding: 20px;
+			backdrop-filter: blur(10px);
+			box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+		}
 
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
+		.header {
+			text-align: center;
+			margin-bottom: 20px;
+		}
 
-        .title {
-            font-size: 24px;
-            font-weight: bold;
-            color: #4ade80;
-            margin-bottom: 10px;
-        }
+		.title {
+			font-size: 24px;
+			font-weight: bold;
+			color: #4ade80;
+			margin-bottom: 10px;
+		}
 
-        .score {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 25px;
-            padding: 10px 20px;
-            font-size: 18px;
-            font-weight: bold;
-            display: inline-block;
-        }
+		.score {
+			background: rgba(255, 255, 255, 0.2);
+			border-radius: 25px;
+			padding: 10px 20px;
+			font-size: 18px;
+			font-weight: bold;
+			display: inline-block;
+		}
 
-        .controls {
-            margin-bottom: 20px;
-        }
+		.controls {
+			margin-bottom: 20px;
+		}
 
-        .dropdown {
-            width: 100%;
-            padding: 12px;
-            border-radius: 10px;
-            border: none;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            font-size: 16px;
-            margin-bottom: 10px;
-            backdrop-filter: blur(10px);
-        }
+		.tree-config {
+			background: rgba(0, 0, 0, 0.3);
+			border-radius: 15px;
+			padding: 15px;
+			margin-bottom: 15px;
+		}
 
-        .dropdown option {
-            background: #4c1d95;
-            color: white;
-        }
+		.config-title {
+			font-size: 16px;
+			font-weight: bold;
+			color: #4ade80;
+			margin-bottom: 10px;
+		}
 
-        .input-container {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
+		.config-row {
+			display: flex;
+			gap: 10px;
+			margin-bottom: 10px;
+		}
 
-        .search-input {
-            flex: 1;
-            padding: 12px;
-            border-radius: 10px;
-            border: none;
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            font-size: 16px;
-            backdrop-filter: blur(10px);
-        }
+		.config-input {
+			flex: 1;
+			padding: 8px 12px;
+			border-radius: 8px;
+			border: none;
+			background: rgba(255, 255, 255, 0.2);
+			color: white;
+			font-size: 14px;
+			backdrop-filter: blur(10px);
+		}
 
-        .search-input::placeholder {
-            color: rgba(255, 255, 255, 0.7);
-        }
+		.config-input::placeholder {
+			color: rgba(255, 255, 255, 0.7);
+		}
 
-        .search-btn {
-            padding: 12px 20px;
-            border-radius: 10px;
-            border: none;
-            background: #4ade80;
-            color: white;
-            font-weight: bold;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
+		.generate-btn {
+			padding: 8px 15px;
+			border-radius: 8px;
+			border: none;
+			background: #8b5cf6;
+			color: white;
+			font-weight: bold;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			font-size: 14px;
+		}
 
-        .search-btn:hover {
-            background: #22c55e;
-            transform: translateY(-2px);
-        }
+		.generate-btn:hover {
+			background: #7c3aed;
+			transform: translateY(-1px);
+		}
 
-        .path-display {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 20px;
-            min-height: 60px;
-        }
+		.dropdown {
+			width: 100%;
+			padding: 12px;
+			border-radius: 10px;
+			border: none;
+			background: rgba(255, 255, 255, 0.2);
+			color: white;
+			font-size: 16px;
+			margin-bottom: 10px;
+			backdrop-filter: blur(10px);
+		}
 
-        .path-label {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
+		.dropdown option {
+			background: #4c1d95;
+			color: white;
+		}
 
-        .path-text {
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            line-height: 1.5;
-            word-break: break-all;
-        }
+		.input-container {
+			display: flex;
+			gap: 10px;
+			margin-bottom: 15px;
+		}
 
-        .tree-container {
-            background: rgba(0, 0, 0, 0.8);
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 20px;
-            min-height: 300px;
-            position: relative;
-            overflow: hidden;
-        }
+		.search-input {
+			flex: 1;
+			padding: 12px;
+			border-radius: 10px;
+			border: none;
+			background: rgba(255, 255, 255, 0.2);
+			color: white;
+			font-size: 16px;
+			backdrop-filter: blur(10px);
+		}
 
-        .tree-svg {
-            width: 100%;
-            height: 280px;
-            viewBox="0 0 360 200";
-            overflow: visible;
-        }
+		.search-input::placeholder {
+			color: rgba(255, 255, 255, 0.7);
+		}
 
-        .node {
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
+		.search-btn {
+			padding: 12px 20px;
+			border-radius: 10px;
+			border: none;
+			background: #4ade80;
+			color: white;
+			font-weight: bold;
+			cursor: pointer;
+			transition: all 0.3s ease;
+		}
 
-        .node circle {
-            fill: #4ade80;
-            stroke: #22c55e;
-            stroke-width: 2;
-        }
+		.search-btn:hover {
+			background: #22c55e;
+			transform: translateY(-2px);
+		}
 
-        .node.visited circle {
-            fill: #fbbf24;
-            stroke: #f59e0b;
-        }
+		.path-display {
+			background: rgba(255, 255, 255, 0.2);
+			border-radius: 15px;
+			padding: 15px;
+			margin-bottom: 20px;
+			min-height: 60px;
+		}
 
-        .node.current circle {
-            fill: #ef4444;
-            stroke: #dc2626;
-            animation: pulse 1s infinite;
-        }
+		.path-label {
+			font-size: 18px;
+			font-weight: bold;
+			margin-bottom: 10px;
+		}
 
-        .node.target circle {
-            fill: #8b5cf6;
-            stroke: #7c3aed;
-        }
+		.path-text {
+			font-family: 'Courier New', monospace;
+			font-size: 14px;
+			line-height: 1.5;
+			word-break: break-all;
+		}
 
-        .node text {
-            font-family: monospace;
-            font-size: 12px;
-            fill: white;
-            text-anchor: middle;
-            dominant-baseline: middle;
-        }
+		.tree-container {
+			background: rgba(0, 0, 0, 0.8);
+			border-radius: 15px;
+			padding: 20px;
+			margin-bottom: 20px;
+			min-height: 400px;
+			max-height: 500px;
+			position: relative;
+			overflow: auto;
+		}
 
-        .edge {
-            stroke: #4ade80;
-            stroke-width: 2;
-            fill: none;
-        }
+		.tree-svg {
+			width: 100%;
+			height: 100%;
+			min-height: 350px;
+			overflow: visible;
+		}
 
-        .edge.highlighted {
-            stroke: #fbbf24;
-            stroke-width: 3;
-            animation: flow 2s infinite;
-        }
+		.node {
+			cursor: pointer;
+			transition: all 0.3s ease;
+		}
 
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
-        }
+		.node circle {
+			fill: #4ade80;
+			stroke: #22c55e;
+			stroke-width: 2;
+		}
 
-        @keyframes flow {
-            0%, 100% { stroke-dasharray: 5,5; stroke-dashoffset: 0; }
-            50% { stroke-dashoffset: 10; }
-        }
+		.node.visited circle {
+			fill: #fbbf24;
+			stroke: #f59e0b;
+		}
 
-        .algorithm-info {
-            background: rgba(0, 0, 0, 0.8);
-            border-radius: 15px;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
+		.node.current circle {
+			fill: #ef4444;
+			stroke: #dc2626;
+			animation: pulse 1s infinite;
+		}
 
-        .info-title {
-            font-size: 16px;
-            font-weight: bold;
-            color: #4ade80;
-            margin-bottom: 10px;
-        }
+		.node.target circle {
+			fill: #8b5cf6;
+			stroke: #7c3aed;
+		}
 
-        .info-text {
-            font-size: 14px;
-            line-height: 1.4;
-            margin-bottom: 8px;
-        }
+		.node text {
+			font-family: monospace;
+			font-size: 12px;
+			fill: white;
+			text-anchor: middle;
+			dominant-baseline: middle;
+		}
 
-        .controls-btn {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-        }
+		.edge {
+			stroke: #4ade80;
+			stroke-width: 2;
+			fill: none;
+		}
 
-        .btn {
-            padding: 15px;
-            border-radius: 15px;
-            border: none;
-            background: #3b82f6;
-            color: white;
-            font-size: 18px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            min-width: 60px;
-        }
+		.edge.highlighted {
+			stroke: #fbbf24;
+			stroke-width: 3;
+			animation: flow 2s infinite;
+		}
 
-        .btn:hover {
-            background: #2563eb;
-            transform: translateY(-2px);
-        }
+		@keyframes pulse {
+			0%, 100% { transform: scale(1); }
+			50% { transform: scale(1.1); }
+		}
 
-        .status {
-            text-align: center;
-            font-weight: bold;
-            margin: 10px 0;
-            font-size: 16px;
-        }
+		@keyframes flow {
+			0%, 100% { stroke-dasharray: 5,5; stroke-dashoffset: 0; }
+			50% { stroke-dashoffset: 10; }
+		}
 
-        .status.success { color: #4ade80; }
-        .status.error { color: #ef4444; }
-        .status.info { color: #60a5fa; }
-    </style>
+		.algorithm-info {
+			background: rgba(0, 0, 0, 0.8);
+			border-radius: 15px;
+			padding: 15px;
+			margin-bottom: 20px;
+		}
+
+		.info-title {
+			font-size: 16px;
+			font-weight: bold;
+			color: #4ade80;
+			margin-bottom: 10px;
+		}
+
+		.info-text {
+			font-size: 14px;
+			line-height: 1.4;
+			margin-bottom: 8px;
+		}
+
+		.controls-btn {
+			display: flex;
+			justify-content: center;
+			gap: 15px;
+		}
+
+		.btn {
+			padding: 15px;
+			border-radius: 15px;
+			border: none;
+			background: #3b82f6;
+			color: white;
+			font-size: 18px;
+			cursor: pointer;
+			transition: all 0.3s ease;
+			min-width: 60px;
+		}
+
+		.btn:hover {
+			background: #2563eb;
+			transform: translateY(-2px);
+		}
+
+		.status {
+			text-align: center;
+			font-weight: bold;
+			margin: 10px 0;
+			font-size: 16px;
+		}
+
+		.status.success { color: #4ade80; }
+		.status.error { color: #ef4444; }
+		.status.info { color: #60a5fa; }
+
+		.tree-info {
+			background: rgba(0, 0, 0, 0.3);
+			border-radius: 10px;
+			padding: 10px;
+			margin-bottom: 10px;
+			font-size: 12px;
+			text-align: center;
+		}
+	</style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <div class="title">🌳 Algorithm Visualizer</div>
-            <div class="score">Step: <span id="stepCount">0</span></div>
-        </div>
+	<div class="container">
+		<div class="header">
+			<div class="title">🌳 Algorithm Visualizer</div>
+			<div class="score">Step: <span id="stepCount">0</span></div>
+		</div>
 
-        <div class="controls">
-            <select class="dropdown" id="algorithmSelect">
-                <option value="bfs">Breadth-First Search (BFS)</option>
-                <option value="dfs">Depth-First Search (DFS)</option>
-                <option value="preorder">Pre-order Traversal</option>
-                <option value="inorder">In-order Traversal</option>
-                <option value="postorder">Post-order Traversal</option>
-            </select>
+		<div class="controls">
+			<div class="tree-config">
+				<div class="config-title">Tree Configuration</div>
+				<div class="config-row">
+					<input type="number" class="config-input" id="treeLevels" placeholder="Levels (2-10)" min="2" max="10" value="3">
+					<input type="number" class="config-input" id="nodeCount" placeholder="Total nodes (3-50)" min="3" max="50" value="7">
+					<button class="generate-btn" onclick="generateCustomTree()">Generate</button>
+				</div>
+				<div class="config-row">
+					<input type="number" class="config-input" id="maxChildren" placeholder="Max children per node (2-5)" min="2" max="5" value="2">
+					<button class="generate-btn" onclick="generateRandomTree()">Random Tree</button>
+				</div>
+				<div class="tree-info" id="treeInfo">Current tree: 3 levels, 7 nodes (A,B,C,D,E,F,G)</div>
+			</div>
 
-            <div class="input-container">
-                <input type="text" class="search-input" id="searchValue" placeholder="Enter value to search" maxlength="2">
-                <button class="search-btn" onclick="startVisualization()">Start</button>
-            </div>
-        </div>
+			<select class="dropdown" id="algorithmSelect">
+				<option value="bfs">Breadth-First Search (BFS)</option>
+				<option value="dfs">Depth-First Search (DFS)</option>
+				<option value="preorder">Pre-order Traversal</option>
+				<option value="inorder">In-order Traversal</option>
+				<option value="postorder">Post-order Traversal</option>
+			</select>
 
-        <div class="status" id="status">Select algorithm and enter value to search</div>
+			<div class="input-container">
+				<input type="text" class="search-input" id="searchValue" placeholder="Enter value to search" maxlength="3">
+				<button class="search-btn" onclick="startVisualization()">Start</button>
+			</div>
+		</div>
 
-        <div class="path-display">
-            <div class="path-label">Traversal Path:</div>
-            <div class="path-text" id="pathDisplay">Path will appear here...</div>
-        </div>
+		<div class="status" id="status">Configure tree and select algorithm</div>
 
-        <div class="tree-container">
-            <svg class="tree-svg" id="treeSvg"></svg>
-        </div>
+		<div class="path-display">
+			<div class="path-label">Traversal Path:</div>
+			<div class="path-text" id="pathDisplay">Path will appear here...</div>
+		</div>
 
-        <div class="algorithm-info" id="algorithmInfo">
-            <div class="info-title">Algorithm Information</div>
-            <div id="infoContent">Select an algorithm to see details</div>
-        </div>
+		<div class="tree-container">
+			<svg class="tree-svg" id="treeSvg"></svg>
+		</div>
 
-        <div class="controls-btn">
-            <button class="btn" onclick="resetVisualization()">🔄</button>
-            <button class="btn" onclick="pausePlay()" id="pauseBtn">⏸️</button>
-            <button class="btn" onclick="stepForward()">⏭️</button>
-        </div>
-    </div>
+		<div class="algorithm-info" id="algorithmInfo">
+			<div class="info-title">Algorithm Information</div>
+			<div id="infoContent">Select an algorithm to see details</div>
+		</div>
 
-    <script>
-        // Tree data structure
-        const treeData = {
-            value: 'A',
-            x: 160, y: 40,
-            children: [
-                {
-                    value: 'B',
-                    x: 100, y: 100,
-                    children: [
-                        { value: 'D', x: 60, y: 160, children: [] },
-                        { value: 'E', x: 140, y: 160, children: [] }
-                    ]
-                },
-                {
-                    value: 'C',
-                    x: 220, y: 100,
-                    children: [
-                        { value: 'F', x: 180, y: 160, children: [] },
-                        { value: 'G', x: 260, y: 160, children: [] }
-                    ]
-                }
-            ]
-        };
+		<div class="controls-btn">
+			<button class="btn" onclick="resetVisualization()">🔄</button>
+			<button class="btn" onclick="pausePlay()" id="pauseBtn">⏸️</button>
+			<button class="btn" onclick="stepForward()">⏭️</button>
+		</div>
+	</div>
 
-        // Flatten tree for easier searching
-        function getAllNodes(node, nodes = []) {
-            nodes.push(node);
-            if (node.children) {
-                node.children.forEach(child => getAllNodes(child, nodes));
-            }
-            return nodes;
-        }
+	<script>
+		// Global variables
+		let currentTree = null;
+		let currentAlgorithm = 'bfs';
+		let searchTarget = '';
+		let traversalPath = [];
+		let currentStep = 0;
+		let isRunning = false;
+		let isPaused = false;
+		let intervalId = null;
 
-        let currentAlgorithm = 'bfs';
-        let searchTarget = '';
-        let traversalPath = [];
-        let currentStep = 0;
-        let isRunning = false;
-        let isPaused = false;
-        let intervalId = null;
+		// Generate node labels
+		function generateNodeLabels(count) {
+			const labels = [];
+			for (let i = 0; i < count; i++) {
+				if (i < 26) {
+					labels.push(String.fromCharCode(65 + i)); // A, B, C...
+				} else {
+					const firstChar = String.fromCharCode(65 + Math.floor((i - 26) / 26));
+					const secondChar = String.fromCharCode(65 + (i - 26) % 26);
+					labels.push(firstChar + secondChar); // AA, AB, AC...
+				}
+			}
+			return labels;
+		}
 
-        // Algorithm information
-        const algorithmInfo = {
-            bfs: {
-                title: "Breadth-First Search (BFS)",
-                dataStructure: "Queue (FIFO)",
-                timeComplexity: "O(V + E)",
-                spaceComplexity: "O(V)",
-                description: "Explores nodes level by level. Uses a queue to keep track of nodes to visit.",
-                conditions: "Good for finding shortest path in unweighted graphs."
-            },
-            dfs: {
-                title: "Depth-First Search (DFS)",
-                dataStructure: "Stack (LIFO) or Recursion",
-                timeComplexity: "O(V + E)",
-                spaceComplexity: "O(V)",
-                description: "Goes deep into each branch before backtracking. Uses a stack or recursion.",
-                conditions: "Good for detecting cycles, topological sorting."
-            },
-            preorder: {
-                title: "Pre-order Traversal",
-                dataStructure: "Stack or Recursion",
-                timeComplexity: "O(n)",
-                spaceComplexity: "O(h)",
-                description: "Visit root, then left subtree, then right subtree (Root → Left → Right).",
-                conditions: "Useful for creating a copy of the tree."
-            },
-            inorder: {
-                title: "In-order Traversal",
-                dataStructure: "Stack or Recursion",
-                timeComplexity: "O(n)",
-                spaceComplexity: "O(h)",
-                description: "Visit left subtree, then root, then right subtree (Left → Root → Right).",
-                conditions: "For BST, gives sorted order of elements."
-            },
-            postorder: {
-                title: "Post-order Traversal",
-                dataStructure: "Stack or Recursion",
-                timeComplexity: "O(n)",
-                spaceComplexity: "O(h)",
-                description: "Visit left subtree, then right subtree, then root (Left → Right → Root).",
-                conditions: "Useful for deleting nodes or calculating size."
-            }
-        };
+		// Generate custom tree based on user input
+		function generateCustomTree() {
+			const levels = parseInt(document.getElementById('treeLevels').value) || 3;
+			const totalNodes = parseInt(document.getElementById('nodeCount').value) || 7;
+			const maxChildren = parseInt(document.getElementById('maxChildren').value) || 2;
 
-        // Initialize the tree visualization
-        function initializeTree() {
-            const svg = document.getElementById('treeSvg');
-            svg.innerHTML = '';
-            
-            // Draw edges first
-            drawEdges(treeData, svg);
-            
-            // Draw nodes
-            drawNodes(treeData, svg);
-        }
+			if (levels < 2 || levels > 10) {
+				document.getElementById('status').textContent = 'Levels must be between 2 and 10';
+				document.getElementById('status').className = 'status error';
+				return;
+			}
 
-        function drawEdges(node, svg, parent = null) {
-            if (parent) {
-                const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
-                line.setAttribute('x1', parent.x);
-                line.setAttribute('y1', parent.y);
-                line.setAttribute('x2', node.x);
-                line.setAttribute('y2', node.y);
-                line.setAttribute('class', 'edge');
-                line.setAttribute('id', `edge-${parent.value}-${node.value}`);
-                svg.appendChild(line);
-            }
-            
-            if (node.children) {
-                node.children.forEach(child => {
-                    drawEdges(child, svg, node);
-                });
-            }
-        }
+			if (totalNodes < 3 || totalNodes > 50) {
+				document.getElementById('status').textContent = 'Node count must be between 3 and 50';
+				document.getElementById('status').className = 'status error';
+				return;
+			}
 
-        function drawNodes(node, svg) {
-            const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-            group.setAttribute('class', 'node');
-            group.setAttribute('id', `node-${node.value}`);
-            
-            const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
-            circle.setAttribute('cx', node.x);
-            circle.setAttribute('cy', node.y);
-            circle.setAttribute('r', 20);
-            
-            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-            text.setAttribute('x', node.x);
-            text.setAttribute('y', node.y);
-            text.textContent = node.value;
-            
-            group.appendChild(circle);
-            group.appendChild(text);
-            svg.appendChild(group);
-            
-            if (node.children) {
-                node.children.forEach(child => {
-                    drawNodes(child, svg);
-                });
-            }
-        }
+			if (maxChildren < 2 || maxChildren > 5) {
+				document.getElementById('status').textContent = 'Max children must be between 2 and 5';
+				document.getElementById('status').className = 'status error';
+				return;
+			}
 
-        // Algorithm implementations
-        function bfsTraversal(root, target) {
-            const queue = [root];
-            const path = [];
-            const visited = new Set();
-            
-            while (queue.length > 0) {
-                const node = queue.shift();
-                if (visited.has(node.value)) continue;
-                
-                visited.add(node.value);
-                const found = node.value === target;
-                path.push({
-                    node: node.value,
-                    action: 'visit',
-                    found: found
-                });
-                
-                if (found) {
-                    break;
-                }
-                
-                if (node.children) {
-                    node.children.forEach(child => {
-                        if (!visited.has(child.value)) {
-                            queue.push(child);
-                        }
-                    });
-                }
-            }
-            
-            return path;
-        }
+			const labels = generateNodeLabels(totalNodes);
+			currentTree = buildFlexibleTree(labels, levels, maxChildren);
+			
+			// Update tree info display
+			const nodeList = getAllNodes(currentTree).map(n => n.value).join(',');
+			document.getElementById('treeInfo').textContent = 
+				`Current tree: ${levels} levels, ${totalNodes} nodes (${nodeList})`;
 
-        function dfsTraversal(root, target) {
-            const stack = [root];
-            const path = [];
-            const visited = new Set();
-            
-            while (stack.length > 0) {
-                const node = stack.pop();
-                if (visited.has(node.value)) continue;
-                
-                visited.add(node.value);
-                const found = node.value === target;
-                path.push({
-                    node: node.value,
-                    action: 'visit',
-                    found: found
-                });
-                
-                if (found) {
-                    break;
-                }
-                
-                if (node.children) {
-                    // Add children in reverse order for correct DFS order
-                    for (let i = node.children.length - 1; i >= 0; i--) {
-                        if (!visited.has(node.children[i].value)) {
-                            stack.push(node.children[i]);
-                        }
-                    }
-                }
-            }
-            
-            return path;
-        }
+			initializeTree();
+			resetVisualization();
+			
+			document.getElementById('status').textContent = 
+				`Generated tree with ${totalNodes} nodes and ${levels} levels`;
+			document.getElementById('status').className = 'status success';
+		}
 
-        function preorderTraversal(node, target, path = []) {
-            if (!node) return path;
-            
-            const found = node.value === target;
-            path.push({
-                node: node.value,
-                action: 'visit',
-                found: found
-            });
-            
-            if (found) return path;
-            
-            if (node.children) {
-                node.children.forEach(child => {
-                    if (!path.find(p => p.found)) {
-                        preorderTraversal(child, target, path);
-                    }
-                });
-            }
-            
-            return path;
-        }
+		// Generate random tree structure
+		function generateRandomTree() {
+			const levels = parseInt(document.getElementById('treeLevels').value) || 3;
+			const totalNodes = parseInt(document.getElementById('nodeCount').value) || 7;
+			const maxChildren = parseInt(document.getElementById('maxChildren').value) || 2;
 
-        function inorderTraversal(node, target, path = []) {
-            if (!node) return path;
-            
-            // Left
-            if (node.children && node.children[0]) {
-                if (!path.find(p => p.found)) {
-                    inorderTraversal(node.children[0], target, path);
-                }
-            }
-            
-            // Root
-            if (!path.find(p => p.found)) {
-                const found = node.value === target;
-                path.push({
-                    node: node.value,
-                    action: 'visit',
-                    found: found
-                });
-                
-                if (found) return path;
-            }
-            
-            // Right
-            if (node.children && node.children[1]) {
-                if (!path.find(p => p.found)) {
-                    inorderTraversal(node.children[1], target, path);
-                }
-            }
-            
-            return path;
-        }
+			if (levels < 2 || levels > 10 || totalNodes < 3 || totalNodes > 50) {
+				document.getElementById('status').textContent = 'Please check your input values';
+				document.getElementById('status').className = 'status error';
+				return;
+			}
 
-        function postorderTraversal(node, target, path = []) {
-            if (!node) return path;
-            
-            // Left
-            if (node.children && node.children[0]) {
-                if (!path.find(p => p.found)) {
-                    postorderTraversal(node.children[0], target, path);
-                }
-            }
-            
-            // Right
-            if (node.children && node.children[1]) {
-                if (!path.find(p => p.found)) {
-                    postorderTraversal(node.children[1], target, path);
-                }
-            }
-            
-            // Root
-            if (!path.find(p => p.found)) {
-                const found = node.value === target;
-                path.push({
-                    node: node.value,
-                    action: 'visit',
-                    found: found
-                });
-            }
-            
-            return path;
-        }
+			const labels = generateNodeLabels(totalNodes);
+			currentTree = buildRandomTree(labels, levels, maxChildren);
+			
+			const nodeList = getAllNodes(currentTree).map(n => n.value).join(',');
+			document.getElementById('treeInfo').textContent = 
+				`Random tree: ${levels} levels, ${totalNodes} nodes (${nodeList})`;
 
-        function startVisualization() {
-            const algorithmSelect = document.getElementById('algorithmSelect');
-            const searchInput = document.getElementById('searchValue');
-            
-            currentAlgorithm = algorithmSelect.value;
-            searchTarget = searchInput.value.toUpperCase().trim();
-            
-            if (!searchTarget) {
-                document.getElementById('status').textContent = 'Please enter a value to search';
-                document.getElementById('status').className = 'status error';
-                return;
-            }
+			initializeTree();
+			resetVisualization();
+			
+			document.getElementById('status').textContent = 
+				`Generated random tree with ${totalNodes} nodes`;
+			document.getElementById('status').className = 'status success';
+		}
 
-            // Check if target exists in tree
-            const allNodes = getAllNodes(treeData);
-            const targetExists = allNodes.some(node => node.value === searchTarget);
-            
-            console.log('Available nodes:', allNodes.map(n => n.value));
-            console.log('Searching for:', searchTarget);
-            console.log('Target exists:', targetExists);
-            
-            if (!targetExists) {
-                document.getElementById('status').textContent = `Target ${searchTarget} not in tree. Available: A,B,C,D,E,F,G`;
-                document.getElementById('status').className = 'status error';
-                return;
-            }
-            
-            // Reset visualization first
-            resetVisualization(false);
-            
-            // Generate traversal path based on selected algorithm
-            switch (currentAlgorithm) {
-                case 'bfs':
-                    traversalPath = bfsTraversal(treeData, searchTarget);
-                    break;
-                case 'dfs':
-                    traversalPath = dfsTraversal(treeData, searchTarget);
-                    break;
-                case 'preorder':
-                    traversalPath = preorderTraversal(treeData, searchTarget);
-                    break;
-                case 'inorder':
-                    traversalPath = inorderTraversal(treeData, searchTarget);
-                    break;
-                case 'postorder':
-                    traversalPath = postorderTraversal(treeData, searchTarget);
-                    break;
-            }
-            
-            console.log('Traversal path:', traversalPath);
-            
-            currentStep = 0;
-            updateAlgorithmInfo();
-            
-            document.getElementById('status').textContent = `Starting ${algorithmInfo[currentAlgorithm].title}...`;
-            document.getElementById('status').className = 'status info';
-            
-            isRunning = true;
-            isPaused = false;
-            document.getElementById('pauseBtn').textContent = '⏸️';
-            
-            // Start immediately with first step, then continue with interval
-            setTimeout(() => {
-                stepForward();
-                intervalId = setInterval(stepForward, 1200);
-            }, 500);
-        }
+		// Build a flexible tree with custom branching
+		function buildFlexibleTree(labels, maxLevels, maxChildren) {
+			if (labels.length === 0) return null;
 
-        function stepForward() {
-            if (currentStep >= traversalPath.length) {
-                stopVisualization();
-                return;
-            }
-            
-            const step = traversalPath[currentStep];
-            const nodeElement = document.getElementById(`node-${step.node}`);
-            
-            if (!nodeElement) {
-                console.error(`Node ${step.node} not found`);
-                currentStep++;
-                return;
-            }
-            
-            // Update node appearance
-            if (step.found) {
-                nodeElement.classList.add('target');
-                document.getElementById('status').textContent = `Found target: ${searchTarget}!`;
-                document.getElementById('status').className = 'status success';
-                stopVisualization();
-            } else {
-                nodeElement.classList.add('current');
-                setTimeout(() => {
-                    nodeElement.classList.remove('current');
-                    nodeElement.classList.add('visited');
-                }, 800);
-            }
-            
-            // Update path display
-            const pathNodes = traversalPath.slice(0, currentStep + 1).map(s => s.node).join(' → ');
-            document.getElementById('pathDisplay').textContent = pathNodes;
-            
-            // Update step counter
-            document.getElementById('stepCount').textContent = currentStep + 1;
-            
-            currentStep++;
-            
-            // If this was the last step and target wasn't found
-            if (currentStep >= traversalPath.length && !step.found) {
-                setTimeout(() => {
-                    document.getElementById('status').textContent = `Completed traversal - ${searchTarget} not found`;
-                    document.getElementById('status').className = 'status error';
-                }, 900);
-            }
-        }
+			const containerWidth = 500;
+			const containerHeight = Math.max(350, maxLevels * 70);
+			
+			let nodeIndex = 0;
+			const nodes = [];
 
-        function pausePlay() {
-            if (!isRunning) return;
-            
-            if (isPaused) {
-                isPaused = false;
-                document.getElementById('pauseBtn').textContent = '⏸️';
-                intervalId = setInterval(stepForward, 1000);
-            } else {
-                isPaused = true;
-                document.getElementById('pauseBtn').textContent = '▶️';
-                clearInterval(intervalId);
-            }
-        }
+			function createNode(label, level, positionInLevel, totalInLevel) {
+				const x = (containerWidth / (totalInLevel + 1)) * (positionInLevel + 1);
+				const y = (containerHeight / (maxLevels + 1)) * (level + 1);
 
-        function stopVisualization() {
-            isRunning = false;
-            isPaused = false;
-            clearInterval(intervalId);
-            document.getElementById('pauseBtn').textContent = '⏸️';
-            
-            if (currentStep >= traversalPath.length && !traversalPath[traversalPath.length - 1]?.found) {
-                document.getElementById('status').textContent = `Target ${searchTarget} not found`;
-                document.getElementById('status').className = 'status error';
-            }
-        }
+				return {
+					value: label,
+					x: x,
+					y: y,
+					children: [],
+					level: level
+				};
+			}
 
-        function resetVisualization(clearInput = true) {
-            stopVisualization();
-            
-            // Reset tree visualization
-            const nodes = document.querySelectorAll('.node');
-            nodes.forEach(node => {
-                node.classList.remove('visited', 'current', 'target');
-            });
-            
-            // Reset displays
-            document.getElementById('pathDisplay').textContent = 'Path will appear here...';
-            document.getElementById('stepCount').textContent = '0';
-            
-            if (clearInput) {
-                document.getElementById('searchValue').value = '';
-                document.getElementById('status').textContent = 'Select algorithm and enter value to search';
-                document.getElementById('status').className = 'status';
-            }
-            
-            currentStep = 0;
-            traversalPath = [];
-        }
+			// Create root
+			const root = createNode(labels[nodeIndex++], 0, 0, 1);
+			nodes.push(root);
 
-        function updateAlgorithmInfo() {
-            const info = algorithmInfo[currentAlgorithm];
-            const infoContent = document.getElementById('infoContent');
-            
-            infoContent.innerHTML = `
-                <div class="info-text"><strong>Data Structure:</strong> ${info.dataStructure}</div>
-                <div class="info-text"><strong>Time Complexity:</strong> ${info.timeComplexity}</div>
-                <div class="info-text"><strong>Space Complexity:</strong> ${info.spaceComplexity}</div>
-                <div class="info-text"><strong>Description:</strong> ${info.description}</div>
-                <div class="info-text"><strong>Best for:</strong> ${info.conditions}</div>
-            `;
-        }
+			// Build level by level
+			let currentLevelNodes = [root];
+			
+			for (let level = 1; level < maxLevels && nodeIndex < labels.length; level++) {
+				const nextLevelNodes = [];
+				
+				for (let parent of currentLevelNodes) {
+					if (nodeIndex >= labels.length) break;
+					
+					// Determine number of children (1 to maxChildren)
+					const remainingNodes = labels.length - nodeIndex;
+					const remainingParents = currentLevelNodes.length - currentLevelNodes.indexOf(parent) - 1;
+					const maxPossibleChildren = Math.min(maxChildren, remainingNodes);
+					
+					let numChildren;
+					if (remainingParents === 0) {
+						// Last parent in level, give it all remaining nodes (up to max)
+						numChildren = Math.min(maxPossibleChildren, remainingNodes);
+					} else {
+						// Distribute nodes more evenly
+						numChildren = Math.min(maxChildren, Math.ceil(remainingNodes / (remainingParents + 1)));
+					}
 
-        // Event listeners
-        document.getElementById('algorithmSelect').addEventListener('change', function() {
-            currentAlgorithm = this.value;
-            updateAlgorithmInfo();
-        });
+					for (let i = 0; i < numChildren && nodeIndex < labels.length; i++) {
+						const child = createNode(labels[nodeIndex++], level, nextLevelNodes.length, 0);
+						parent.children.push(child);
+						nextLevelNodes.push(child);
+					}
+				}
 
-        document.getElementById('searchValue').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                startVisualization();
-            }
-        });
+				// Recalculate positions for this level
+				nextLevelNodes.forEach((node, index) => {
+					node.x = (containerWidth / (nextLevelNodes.length + 1)) * (index + 1);
+				});
 
-        // Initialize
-        initializeTree();
-        updateAlgorithmInfo();
-    </script>
+				currentLevelNodes = nextLevelNodes;
+			}
+
+			return root;
+		}
+
+		// Build a random tree structure
+		function buildRandomTree(labels, maxLevels, maxChildren) {
+			if (labels.length === 0) return null;
+
+			const containerWidth = 500;
+			const containerHeight = Math.max(350, maxLevels * 70);
+			
+			let nodeIndex = 0;
+
+			function createNode(label, level, x, y) {
+				return {
+					value: label,
+					x: x,
+					y: y,
+					children: [],
+					level: level
+				};
+			}
+
+			// Create root
+			const root = createNode(labels[nodeIndex++], 0, containerWidth / 2, 50);
+			const queue = [root];
+
+			while (queue.length > 0 && nodeIndex < labels.length) {
+				const parent = queue.shift();
+				
+				if (parent.level >= maxLevels - 1) continue;
+
+				// Random number of children (1 to maxChildren)
+				const remainingNodes = labels.length - nodeIndex;
+				const maxPossible = Math.min(maxChildren, remainingNodes);
+				const numChildren = Math.max(1, Math.floor(Math.random() * maxPossible) + 1);
+
+				for (let i = 0; i < numChildren && nodeIndex < labels.length; i++) {
+					const childLevel = parent.level + 1;
+					const levelY = (containerHeight / (maxLevels + 1)) * (childLevel + 1);
+					
+					// Spread children around parent
+					const spreadWidth = Math.min(200, containerWidth / (numChildren + 1));
+					const startX = parent.x - (spreadWidth * numChildren) / 2;
+					const childX = startX + (spreadWidth * i) + spreadWidth / 2;
+					
+					// Keep within bounds
+					const finalX = Math.max(30, Math.min(containerWidth - 30, childX));
+
+					const child = createNode(labels[nodeIndex++], childLevel, finalX, levelY);
+					parent.children.push(child);
+					queue.push(child);
+				}
+			}
+
+			return root;
+		}
+
+		// Flatten tree for easier searching
+		function getAllNodes(node, nodes = []) {
+			if (!node) return nodes;
+			nodes.push(node);
+			if (node.children) {
+				node.children.forEach(child => getAllNodes(child, nodes));
+			}
+			return nodes;
+		}
+
+		// Algorithm information
+		const algorithmInfo = {
+			bfs: {
+				title: "Breadth-First Search (BFS)",
+				dataStructure: "Queue (FIFO)",
+				timeComplexity: "O(V + E)",
+				spaceComplexity: "O(V)",
+				description: "Explores nodes level by level. Uses a queue to keep track of nodes to visit.",
+				conditions: "Good for finding shortest path in unweighted graphs."
+			},
+			dfs: {
+				title: "Depth-First Search (DFS)",
+				dataStructure: "Stack (LIFO) or Recursion",
+				timeComplexity: "O(V + E)",
+				spaceComplexity: "O(V)",
+				description: "Goes deep into each branch before backtracking. Uses a stack or recursion.",
+				conditions: "Good for detecting cycles, topological sorting."
+			},
+			preorder: {
+				title: "Pre-order Traversal",
+				dataStructure: "Stack or Recursion",
+				timeComplexity: "O(n)",
+				spaceComplexity: "O(h)",
+				description: "Visit root, then left subtree, then right subtree (Root → Left → Right).",
+				conditions: "Useful for creating a copy of the tree."
+			},
+			inorder: {
+				title: "In-order Traversal",
+				dataStructure: "Stack or Recursion",
+				timeComplexity: "O(n)",
+				spaceComplexity: "O(h)",
+				description: "Visit left subtree, then root, then right subtree (Left → Root → Right).",
+				conditions: "For BST, gives sorted order of elements."
+			},
+			postorder: {
+				title: "Post-order Traversal",
+				dataStructure: "Stack or Recursion",
+				timeComplexity: "O(n)",
+				spaceComplexity: "O(h)",
+				description: "Visit left subtree, then right subtree, then root (Left → Right → Root).",
+				conditions: "Useful for deleting nodes or calculating size."
+			}
+		};
+
+		// Initialize the tree visualization
+		function initializeTree() {
+			if (!currentTree) return;
+			
+			const svg = document.getElementById('treeSvg');
+			svg.innerHTML = '';
+			
+			// Calculate dynamic viewBox based on tree size
+			const allNodes = getAllNodes(currentTree);
+			if (allNodes.length === 0) return;
+			
+			const maxX = Math.max(...allNodes.map(n => n.x)) + 80;
+			const maxY = Math.max(...allNodes.map(n => n.y)) + 80;
+			const minX = Math.min(...allNodes.map(n => n.x)) - 80;
+			const minY = Math.min(...allNodes.map(n => n.y)) - 80;
+			
+			svg.setAttribute('viewBox', `${minX} ${minY} ${maxX - minX} ${maxY - minY}`);
+			svg.setAttribute('style', `width: 100%; height: ${Math.max(350, maxY)}px;`);
+			
+			// Draw edges first
+			drawEdges(currentTree, svg);
+			
+			// Draw nodes
+			drawNodes(currentTree, svg);
+		}
+
+		function drawEdges(node, svg, parent = null) {
+			if (!node) return;
+			
+			if (parent) {
+				const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+				line.setAttribute('x1', parent.x);
+				line.setAttribute('y1', parent.y);
+				line.setAttribute('x2', node.x);
+				line.setAttribute('y2', node.y);
+				line.setAttribute('class', 'edge');
+				line.setAttribute('id', `edge-${parent.value}-${node.value}`);
+				svg.appendChild(line);
+			}
+			
+			if (node.children) {
+				node.children.forEach(child => {
+					drawEdges(child, svg, node);
+				});
+			}
+		}
+
+		function drawNodes(node, svg) {
+			if (!node) return;
+			
+			const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+			group.setAttribute('class', 'node');
+			group.setAttribute('id', `node-${node.value}`);
+			
+			const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+			circle.setAttribute('cx', node.x);
+			circle.setAttribute('cy', node.y);
+			circle.setAttribute('r', 20);
+			
+			const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+			text.setAttribute('x', node.x);
+			text.setAttribute('y', node.y);
+			text.textContent = node.value;
+			
+			group.appendChild(circle);
+			group.appendChild(text);
+			svg.appendChild(group);
+			
+			if (node.children) {
+				node.children.forEach(child => {
+					drawNodes(child, svg);
+				});
+			}
+		}
+
+		// Algorithm implementations
+		function bfsTraversal(root, target) {
+			const queue = [root];
+			const path = [];
+			const visited = new Set();
+			
+			while (queue.length > 0) {
+				const node = queue.shift();
+				if (visited.has(node.value)) continue;
+				
+				visited.add(node.value);
+				const found = node.value === target;
+				path.push({
+					node: node.value,
+					action: 'visit',
+					found: found
+				});
+				
+				if (found) break;
+				
+				if (node.children) {
+					node.children.forEach(child => {
+						if (!visited.has(child.value)) {
+							queue.push(child);
+						}
+					});
+				}
+			}
+			
+			return path;
+		}
+
+		function dfsTraversal(root, target) {
+			const stack = [root];
+			const path = [];
+			const visited = new Set();
+			
+			while (stack.length > 0) {
+				const node = stack.pop();
+				if (visited.has(node.value)) continue;
+				
+				visited.add(node.value);
+				const found = node.value === target;
+				path.push({
+					node: node.value,
+					action: 'visit',
+					found: found
+				});
+				
+				if (found) break;
+				
+				if (node.children) {
+					for (let i = node.children.length - 1; i >= 0; i--) {
+						if (!visited.has(node.children[i].value)) {
+							stack.push(node.children[i]);
+						}
+					}
+				}
+			}
+			
+			return path;
+		}
+
+		function preorderTraversal(node, target, path = []) {
+			if (!node) return path;
+			
+			const found = node.value === target;
+			path.push({
+				node: node.value,
+				action: 'visit',
+				found: found
+			});
+			
+			if (found) return path;
+			
+			if (node.children) {
+				node.children.forEach(child => {
+					if (!path.find(p => p.found)) {
+						preorderTraversal(child, target, path);
+					}
+				});
+			}
+			
+			return path;
+		}
+
+		function inorderTraversal(node, target, path = []) {
+			if (!node) return path;
+			
+			// Left
+			if (node.children && node.children[0]) {
+				if (!path.find(p => p.found)) {
+					inorderTraversal(node.children[0], target, path);
+				}
+			}
+			
+			// Root
+			if (!path.find(p => p.found)) {
+				const found = node.value === target;
+				path.push({
+					node: node.value,
+					action: 'visit',
+					found: found
+				});
+				
+				if (found) return path;
+			}
+			
+			// Right
+			if (node.children && node.children[1]) {
+				if (!path.find(p => p.found)) {
+					inorderTraversal(node.children[1], target, path);
+				}
+			}
+			
+			return path;
+		}
+
+		function postorderTraversal(node, target, path = []) {
+			if (!node) return path;
+			
+			// Left
+			if (node.children && node.children[0]) {
+				if (!path.find(p => p.found)) {
+					postorderTraversal(node.children[0], target, path);
+				}
+			}
+			
+			// Right
+			if (node.children && node.children[1]) {
+				if (!path.find(p => p.found)) {
+					postorderTraversal(node.children[1], target, path);
+				}
+			}
+			
+			// Root
+			if (!path.find(p => p.found)) {
+				const found = node.value === target;
+				path.push({
+					node: node.value,
+					action: 'visit',
+					found: found
+				});
+			}
+			
+			return path;
+		}
+
+		function startVisualization() {
+			if (!currentTree) {
+				document.getElementById('status').textContent = 'Please generate a tree first';
+				document.getElementById('status').className = 'status error';
+				return;
+			}
+
+			const algorithmSelect = document.getElementById('algorithmSelect');
+			const searchInput = document.getElementById('searchValue');
+			
+			currentAlgorithm = algorithmSelect.value;
+			searchTarget = searchInput.value.toUpperCase().trim();
+			
+			if (!searchTarget) {
+				document.getElementById('status').textContent = 'Please enter a value to search';
+				document.getElementById('status').className = 'status error';
+				return;
+			}
+
+			// Check if target exists in tree
+			const allNodes = getAllNodes(currentTree);
+			const targetExists = allNodes.some(node => node.value === searchTarget);
+			
+			if (!targetExists) {
+				const nodeList = allNodes.map(n => n.value).join(',');
+				document.getElementById('status').textContent = `Target ${searchTarget} not in tree. Available: ${nodeList}`;
+				document.getElementById('status').className = 'status error';
+				return;
+			}
+			
+			// Reset visualization first
+			resetVisualization(false);
+			
+			// Generate traversal path based on selected algorithm
+			switch (currentAlgorithm) {
+				case 'bfs':
+					traversalPath = bfsTraversal(currentTree, searchTarget);
+					break;
+				case 'dfs':
+					traversalPath = dfsTraversal(currentTree, searchTarget);
+					break;
+				case 'preorder':
+					traversalPath = preorderTraversal(currentTree, searchTarget);
+					break;
+				case 'inorder':
+					traversalPath = inorderTraversal(currentTree, searchTarget);
+					break;
+				case 'postorder':
+					traversalPath = postorderTraversal(currentTree, searchTarget);
+					break;
+			}
+			
+			currentStep = 0;
+			updateAlgorithmInfo();
+			
+			document.getElementById('status').textContent = `Starting ${algorithmInfo[currentAlgorithm].title}...`;
+			document.getElementById('status').className = 'status info';
+			
+			isRunning = true;
+			isPaused = false;
+			document.getElementById('pauseBtn').textContent = '⏸️';
+			
+			// Start immediately with first step, then continue with interval
+			setTimeout(() => {
+				stepForward();
+				intervalId = setInterval(stepForward, 1200);
+			}, 500);
+		}
+
+		function stepForward() {
+			if (currentStep >= traversalPath.length) {
+				stopVisualization();
+				return;
+			}
+			
+			const step = traversalPath[currentStep];
+			const nodeElement = document.getElementById(`node-${step.node}`);
+			
+			if (!nodeElement) {
+				console.error(`Node ${step.node} not found`);
+				currentStep++;
+				return;
+			}
+			
+			// Update node appearance
+			if (step.found) {
+				nodeElement.classList.add('target');
+				document.getElementById('status').textContent = `Found target: ${searchTarget}!`;
+				document.getElementById('status').className = 'status success';
+				stopVisualization();
+			} else {
+				nodeElement.classList.add('current');
+				setTimeout(() => {
+					nodeElement.classList.remove('current');
+					nodeElement.classList.add('visited');
+				}, 800);
+			}
+			
+			// Update path display
+			const pathNodes = traversalPath.slice(0, currentStep + 1).map(s => s.node).join(' → ');
+			document.getElementById('pathDisplay').textContent = pathNodes;
+			
+			// Update step counter
+			document.getElementById('stepCount').textContent = currentStep + 1;
+			
+			currentStep++;
+			
+			// If this was the last step and target wasn't found
+			if (currentStep >= traversalPath.length && !step.found) {
+				setTimeout(() => {
+					document.getElementById('status').textContent = `Completed traversal - ${searchTarget} not found`;
+					document.getElementById('status').className = 'status error';
+				}, 900);
+			}
+		}
+
+		function pausePlay() {
+			if (!isRunning) return;
+			
+			if (isPaused) {
+				isPaused = false;
+				document.getElementById('pauseBtn').textContent = '⏸️';
+				intervalId = setInterval(stepForward, 1000);
+			} else {
+				isPaused = true;
+				document.getElementById('pauseBtn').textContent = '▶️';
+				clearInterval(intervalId);
+			}
+		}
+
+		function stopVisualization() {
+			isRunning = false;
+			isPaused = false;
+			clearInterval(intervalId);
+			document.getElementById('pauseBtn').textContent = '⏸️';
+		}
+
+		function resetVisualization(clearInput = true) {
+			stopVisualization();
+			
+			// Reset tree visualization
+			const nodes = document.querySelectorAll('.node');
+			nodes.forEach(node => {
+				node.classList.remove('visited', 'current', 'target');
+			});
+			
+			// Reset displays
+			document.getElementById('pathDisplay').textContent = 'Path will appear here...';
+			document.getElementById('stepCount').textContent = '0';
+			
+			if (clearInput) {
+				document.getElementById('searchValue').value = '';
+				document.getElementById('status').textContent = 'Configure tree and select algorithm';
+				document.getElementById('status').className = 'status';
+			}
+			
+			currentStep = 0;
+			traversalPath = [];
+		}
+
+		function updateAlgorithmInfo() {
+			const info = algorithmInfo[currentAlgorithm];
+			const infoContent = document.getElementById('infoContent');
+			
+			infoContent.innerHTML = `
+				<div class="info-text"><strong>Data Structure:</strong> ${info.dataStructure}</div>
+				<div class="info-text"><strong>Time Complexity:</strong> ${info.timeComplexity}</div>
+				<div class="info-text"><strong>Space Complexity:</strong> ${info.spaceComplexity}</div>
+				<div class="info-text"><strong>Description:</strong> ${info.description}</div>
+				<div class="info-text"><strong>Best for:</strong> ${info.conditions}</div>
+			`;
+		}
+
+		// Event listeners
+		document.getElementById('algorithmSelect').addEventListener('change', function() {
+			currentAlgorithm = this.value;
+			updateAlgorithmInfo();
+		});
+
+		document.getElementById('searchValue').addEventListener('keypress', function(e) {
+			if (e.key === 'Enter') {
+				startVisualization();
+			}
+		});
+
+	</script>
 </body>
 </html>
