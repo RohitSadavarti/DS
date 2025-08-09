@@ -142,6 +142,8 @@
         .tree-svg {
             width: 100%;
             height: 280px;
+            viewBox="0 0 360 200";
+            overflow: visible;
         }
 
         .node {
@@ -305,26 +307,35 @@
         // Tree data structure
         const treeData = {
             value: 'A',
-            x: 180, y: 40,
+            x: 160, y: 40,
             children: [
                 {
                     value: 'B',
-                    x: 120, y: 100,
+                    x: 100, y: 100,
                     children: [
-                        { value: 'D', x: 80, y: 160, children: [] },
-                        { value: 'E', x: 160, y: 160, children: [] }
+                        { value: 'D', x: 60, y: 160, children: [] },
+                        { value: 'E', x: 140, y: 160, children: [] }
                     ]
                 },
                 {
                     value: 'C',
-                    x: 240, y: 100,
+                    x: 220, y: 100,
                     children: [
-                        { value: 'F', x: 200, y: 160, children: [] },
-                        { value: 'G', x: 280, y: 160, children: [] }
+                        { value: 'F', x: 180, y: 160, children: [] },
+                        { value: 'G', x: 260, y: 160, children: [] }
                     ]
                 }
             ]
         };
+
+        // Flatten tree for easier searching
+        function getAllNodes(node, nodes = []) {
+            nodes.push(node);
+            if (node.children) {
+                node.children.forEach(child => getAllNodes(child, nodes));
+            }
+            return nodes;
+        }
 
         let currentAlgorithm = 'bfs';
         let searchTarget = '';
@@ -446,13 +457,14 @@
                 if (visited.has(node.value)) continue;
                 
                 visited.add(node.value);
+                const found = node.value === target;
                 path.push({
                     node: node.value,
                     action: 'visit',
-                    found: node.value === target
+                    found: found
                 });
                 
-                if (node.value === target) {
+                if (found) {
                     break;
                 }
                 
@@ -478,13 +490,14 @@
                 if (visited.has(node.value)) continue;
                 
                 visited.add(node.value);
+                const found = node.value === target;
                 path.push({
                     node: node.value,
                     action: 'visit',
-                    found: node.value === target
+                    found: found
                 });
                 
-                if (node.value === target) {
+                if (found) {
                     break;
                 }
                 
@@ -504,13 +517,14 @@
         function preorderTraversal(node, target, path = []) {
             if (!node) return path;
             
+            const found = node.value === target;
             path.push({
                 node: node.value,
                 action: 'visit',
-                found: node.value === target
+                found: found
             });
             
-            if (node.value === target) return path;
+            if (found) return path;
             
             if (node.children) {
                 node.children.forEach(child => {
@@ -535,14 +549,15 @@
             
             // Root
             if (!path.find(p => p.found)) {
+                const found = node.value === target;
                 path.push({
                     node: node.value,
                     action: 'visit',
-                    found: node.value === target
+                    found: found
                 });
+                
+                if (found) return path;
             }
-            
-            if (node.value === target) return path;
             
             // Right
             if (node.children && node.children[1]) {
@@ -573,10 +588,11 @@
             
             // Root
             if (!path.find(p => p.found)) {
+                const found = node.value === target;
                 path.push({
                     node: node.value,
                     action: 'visit',
-                    found: node.value === target
+                    found: found
                 });
             }
             
@@ -595,6 +611,23 @@
                 document.getElementById('status').className = 'status error';
                 return;
             }
+
+            // Check if target exists in tree
+            const allNodes = getAllNodes(treeData);
+            const targetExists = allNodes.some(node => node.value === searchTarget);
+            
+            console.log('Available nodes:', allNodes.map(n => n.value));
+            console.log('Searching for:', searchTarget);
+            console.log('Target exists:', targetExists);
+            
+            if (!targetExists) {
+                document.getElementById('status').textContent = `Target ${searchTarget} not in tree. Available: A,B,C,D,E,F,G`;
+                document.getElementById('status').className = 'status error';
+                return;
+            }
+            
+            // Reset visualization first
+            resetVisualization(false);
             
             // Generate traversal path based on selected algorithm
             switch (currentAlgorithm) {
@@ -615,8 +648,9 @@
                     break;
             }
             
+            console.log('Traversal path:', traversalPath);
+            
             currentStep = 0;
-            resetVisualization(false);
             updateAlgorithmInfo();
             
             document.getElementById('status').textContent = `Starting ${algorithmInfo[currentAlgorithm].title}...`;
@@ -626,7 +660,11 @@
             isPaused = false;
             document.getElementById('pauseBtn').textContent = '⏸️';
             
-            intervalId = setInterval(stepForward, 1000);
+            // Start immediately with first step, then continue with interval
+            setTimeout(() => {
+                stepForward();
+                intervalId = setInterval(stepForward, 1200);
+            }, 500);
         }
 
         function stepForward() {
@@ -638,10 +676,16 @@
             const step = traversalPath[currentStep];
             const nodeElement = document.getElementById(`node-${step.node}`);
             
+            if (!nodeElement) {
+                console.error(`Node ${step.node} not found`);
+                currentStep++;
+                return;
+            }
+            
             // Update node appearance
             if (step.found) {
                 nodeElement.classList.add('target');
-                document.getElementById('status').textContent = `Found target: ${searchTarget}`;
+                document.getElementById('status').textContent = `Found target: ${searchTarget}!`;
                 document.getElementById('status').className = 'status success';
                 stopVisualization();
             } else {
@@ -649,7 +693,7 @@
                 setTimeout(() => {
                     nodeElement.classList.remove('current');
                     nodeElement.classList.add('visited');
-                }, 500);
+                }, 800);
             }
             
             // Update path display
@@ -660,6 +704,14 @@
             document.getElementById('stepCount').textContent = currentStep + 1;
             
             currentStep++;
+            
+            // If this was the last step and target wasn't found
+            if (currentStep >= traversalPath.length && !step.found) {
+                setTimeout(() => {
+                    document.getElementById('status').textContent = `Completed traversal - ${searchTarget} not found`;
+                    document.getElementById('status').className = 'status error';
+                }, 900);
+            }
         }
 
         function pausePlay() {
