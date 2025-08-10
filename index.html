@@ -313,10 +313,20 @@
 		.tree-info {
 			background: rgba(0, 0, 0, 0.3);
 			border-radius: 10px;
-			padding: 10px;
+			padding: 15px;
 			margin-bottom: 10px;
+			font-size: 14px;
+		}
+
+		.tree-info-title {
+			color: #4ade80;
+			font-weight: bold;
+			margin-bottom: 5px;
+		}
+
+		.tree-info-details {
 			font-size: 12px;
-			text-align: center;
+			color: rgba(255, 255, 255, 0.8);
 		}
 	</style>
 </head>
@@ -339,7 +349,11 @@
 					<input type="number" class="config-input" id="maxChildren" placeholder="Max children per node (2-5)" min="2" max="5" value="2">
 					<button class="generate-btn" onclick="generateRandomTree()">Random Tree</button>
 				</div>
-				<div class="tree-info" id="treeInfo">Current tree: 3 levels, 7 nodes (A,B,C,D,E,F,G)</div>
+				<div class="tree-info" id="treeInfo">
+					<div class="tree-info-title">Current Tree:</div>
+					<div class="tree-info-details">3 levels, 7 nodes</div>
+					<div class="tree-info-details">Nodes: A, B, C, D, E, F, G</div>
+				</div>
 			</div>
 
 			<select class="dropdown" id="algorithmSelect">
@@ -433,9 +447,8 @@
 			currentTree = buildFlexibleTree(labels, levels, maxChildren);
 			
 			// Update tree info display
-			const nodeList = getAllNodes(currentTree).map(n => n.value).join(',');
-			document.getElementById('treeInfo').textContent = 
-				`Current tree: ${levels} levels, ${totalNodes} nodes (${nodeList})`;
+			const nodeList = getAllNodes(currentTree).map(n => n.value).join(', ');
+			updateTreeInfo(levels, totalNodes, nodeList);
 
 			initializeTree();
 			resetVisualization();
@@ -460,9 +473,8 @@
 			const labels = generateNodeLabels(totalNodes);
 			currentTree = buildRandomTree(labels, levels, maxChildren);
 			
-			const nodeList = getAllNodes(currentTree).map(n => n.value).join(',');
-			document.getElementById('treeInfo').textContent = 
-				`Random tree: ${levels} levels, ${totalNodes} nodes (${nodeList})`;
+			const nodeList = getAllNodes(currentTree).map(n => n.value).join(', ');
+			updateTreeInfo(levels, totalNodes, nodeList);
 
 			initializeTree();
 			resetVisualization();
@@ -470,6 +482,16 @@
 			document.getElementById('status').textContent = 
 				`Generated random tree with ${totalNodes} nodes`;
 			document.getElementById('status').className = 'status success';
+		}
+
+		// Update tree info display
+		function updateTreeInfo(levels, totalNodes, nodeList) {
+			const treeInfo = document.getElementById('treeInfo');
+			treeInfo.innerHTML = `
+				<div class="tree-info-title">Current Tree:</div>
+				<div class="tree-info-details">${levels} levels, ${totalNodes} nodes</div>
+				<div class="tree-info-details">Nodes: ${nodeList}</div>
+			`;
 		}
 
 		// Build a flexible tree with custom branching
@@ -1056,6 +1078,14 @@
 			}
 		});
 
+		// Initialize on load
+		document.addEventListener('DOMContentLoaded', function() {
+			// Generate initial tree
+			const labels = generateNodeLabels(7);
+			currentTree = buildFlexibleTree(labels, 3, 2);
+			initializeTree();
+			updateAlgorithmInfo();
+		});
 	</script>
 </body>
 </html>
